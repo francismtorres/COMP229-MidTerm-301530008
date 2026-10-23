@@ -79,10 +79,11 @@ function validateBody(req: Request, mode: 'create' | 'update'): string[] {
     errors.push(`Unknown field(s): ${unknown.join(', ')}. Allowed: ${ITEM_WRITABLE_FIELDS.join(', ')}`);
   }
 
-  if (mode === 'update') {
-    for (const k of keys) {
-      if (body[k] === null) errors.push(`${k} cannot be null`);
-    }
+  // null would bypass enum checks and schema defaults (e.g. status: null).
+  // On create, required fields already report "is required" for null.
+  for (const k of keys) {
+    const reported = k === 'owner' || (mode === 'create' && (ITEM_REQUIRED_FIELDS as readonly string[]).includes(k));
+    if (body[k] === null && !reported) errors.push(`${k} cannot be null`);
   }
 
   if (mode === 'create') {
@@ -95,7 +96,7 @@ function validateBody(req: Request, mode: 'create' | 'update'): string[] {
   }
 
   for (const [field, max] of Object.entries(STRING_LIMITS)) {
-    if (body[field] === undefined) continue;
+    if (body[field] === undefined || body[field] === null) continue;
     if (typeof body[field] !== 'string') {
       errors.push(`${field} must be a string`);
     } else if ((body[field] as string).trim() === '' && mode === 'update') {

@@ -94,7 +94,7 @@ database errors to status codes.
   - [x] Delete by owner → 200 / 204
   - [x] Delete /mine empties my list
   - [x] Duplicate title (case-insensitive) → 409 on create and update
-  - [x] Invalid filter value, malformed JSON, empty update body, client-set `owner` → 400
+  - [x] Invalid filter value, malformed JSON, empty update body, client-set `owner`, `null` field values → 400
 
 To re-run the automated tests against a fresh database:
 

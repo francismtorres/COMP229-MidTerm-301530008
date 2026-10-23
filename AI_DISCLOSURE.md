@@ -22,8 +22,8 @@
 | Chose a case-insensitive unique index on `title` and owner checks via `item.owner.equals(req.userId)`, and explained why `set()` + `save()` was used instead of `findByIdAndUpdate` (so update validation runs). | *Compare alternative implementations or architectural choices*; *clarify ... APIs, frameworks, or library usage* |
 | Designed the test scenarios and edge cases (invalid ids, forged tokens, malformed JSON, duplicate titles in a different case, a second user attempting to modify another user's item). | *Generate possible test cases and edge cases* |
 | Wrote the Postman collection with test scripts, and ran it with Newman (44 requests, 56 assertions, 0 failures). | *Help formulate tests for ... APIs, or services* |
-| Found and fixed a problem during testing (the malformed-JSON error message was unclear, so the error handler was improved), and re-ran type checking and the provided unit tests. | *Help identify and explain programming errors*; *help interpret error messages and test failures* |
-| Reviewed the code for security issues, e.g. rejecting client-supplied `owner` and query-operator injection such as `?type[$ne]=x`. | *Review code for readability, maintainability, security, or possible defects* |
+| Found and fixed problems during testing: the malformed-JSON error message was unclear, so the error handler was improved; and a final pre-submission review found that `"status": null` was accepted on create, so the validator now rejects null values. Re-ran type checking, the provided unit tests and the full Postman suite after each fix. | *Help identify and explain programming errors*; *help interpret error messages and test failures* |
+| Reviewed the code for security issues and defects, e.g. rejecting client-supplied `owner` and query-operator injection such as `?type[$ne]=x`; ran a final check from a fresh clone of the GitHub repository on a clean database. | *Review code for readability, maintainability, security, or possible defects* |
 | Wrote the code comments, `IMPLEMENTATION.md`, the README updates and the commit message. | *Assist with documentation and comments* |
 
 ## Uses not explicitly on the permitted list
