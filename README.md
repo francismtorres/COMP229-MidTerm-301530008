@@ -10,6 +10,7 @@ the seven item controllers and the item routes are implemented here.
 - Implementation notes: [`IMPLEMENTATION.md`](IMPLEMENTATION.md)
 - Postman collection: [`postman/Fran-LostFound.postman_collection.json`](postman/Fran-LostFound.postman_collection.json)
 - Test screenshots: [`screenshots/`](screenshots/)
+- AI usage disclosure: [`AI_DISCLOSURE.md`](AI_DISCLOSURE.md)
 
 ---
 
@@ -233,3 +234,4 @@ curl -X DELETE -H "Authorization: Bearer $TOKEN" http://localhost:8080/api/items
 - Folder / archive: `COMP229-MidTerm-301530008` (no `node_modules/`, `dist/` or `.env`)
 - Repository: https://github.com/francismtorres/COMP229-MidTerm-301530008
 - Test evidence: `COMP229-MidTerm-301530008-Test-Screenshots.docx` (Postman + MongoDB Compass)
+- AI usage disclosure: [`AI_DISCLOSURE.md`](AI_DISCLOSURE.md) (also included in the test evidence document)

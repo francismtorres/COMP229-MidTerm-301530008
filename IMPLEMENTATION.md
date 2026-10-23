@@ -115,6 +115,8 @@ npx newman run postman/Fran-LostFound.postman_collection.json
 
 ## 5. References
 
+- AI assistance: Claude Code (Anthropic, Claude Opus 5.5). What it was used for, mapped to the course AI policy, is in [`AI_DISCLOSURE.md`](AI_DISCLOSURE.md).
+
 - Mongoose docs: https://mongoosejs.com/docs/validation.html, https://mongoosejs.com/docs/api/model.html
 - MongoDB collation / unique indexes: https://www.mongodb.com/docs/manual/reference/collation/
 - Express docs: https://expressjs.com/en/guide/routing.html, https://expressjs.com/en/guide/error-handling.html
