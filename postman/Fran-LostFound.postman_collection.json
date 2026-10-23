@@ -1,0 +1,1794 @@
+{
+  "info": {
+    "name": "Fran's Campus Lost & Found API - COMP229 MidTerm 301530008",
+    "description": "Francis Torres (301530008). Run the folders in order against a fresh database.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "franToken",
+      "value": ""
+    },
+    {
+      "key": "alexToken",
+      "value": ""
+    },
+    {
+      "key": "franId",
+      "value": ""
+    },
+    {
+      "key": "franItemId",
+      "value": ""
+    },
+    {
+      "key": "franItem2Id",
+      "value": ""
+    },
+    {
+      "key": "alexItemId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "0 - Server",
+      "item": [
+        {
+          "name": "API root (server running on 8080)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": []
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "1 - Auth (provided)",
+      "item": [
+        {
+          "name": "Signup Fran",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/signup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "signup"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Francis Torres\",\n  \"email\": \"fran.torres@my.centennialcollege.ca\",\n  \"password\": \"secret123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', () => pm.response.to.have.status(201));",
+                  "pm.test('Returns a token', () => pm.expect(pm.response.json().token).to.be.a('string'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Signup duplicate email -> 409",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/signup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "signup"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Francis Torres\",\n  \"email\": \"fran.torres@my.centennialcollege.ca\",\n  \"password\": \"secret123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 409', () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Signin wrong password -> 401",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/signin",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "signin"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"fran.torres@my.centennialcollege.ca\",\n  \"password\": \"wrongpass\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Signin Fran (save token)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/signin",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "signin"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"fran.torres@my.centennialcollege.ca\",\n  \"password\": \"secret123\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set('franToken', pm.response.json().token);",
+                  "pm.collectionVariables.set('franId', pm.response.json().user._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Signup Alex (second user)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/signup",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "signup"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Alex Other\",\n  \"email\": \"alex.other@my.centennialcollege.ca\",\n  \"password\": \"secret456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', () => pm.response.to.have.status(201));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Signin Alex (save token)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/signin",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "signin"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"alex.other@my.centennialcollege.ca\",\n  \"password\": \"secret456\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.collectionVariables.set('alexToken', pm.response.json().token);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get current user (me)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{franToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/me",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "auth",
+                "me"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "2 - Create items (POST /api/items)",
+      "item": [
+        {
+          "name": "Create item without token -> 401",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Black Jansport Backpack\",\n  \"description\": \"Black Jansport backpack with a laptop and a COMP229 notebook inside.\",\n  \"type\": \"Lost\",\n  \"category\": \"Accessories\",\n  \"location\": \"Library, 2nd floor\",\n  \"date\": \"2026-10-20T14:30:00.000Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create item with invalid token -> 401",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer not.a.real.token"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Black Jansport Backpack\",\n  \"description\": \"Black Jansport backpack with a laptop and a COMP229 notebook inside.\",\n  \"type\": \"Lost\",\n  \"category\": \"Accessories\",\n  \"location\": \"Library, 2nd floor\",\n  \"date\": \"2026-10-20T14:30:00.000Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create item missing required fields -> 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{franToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Lonely Umbrella\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create item invalid type/category/date -> 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{franToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Bad Values Item\",\n  \"description\": \"Black Jansport backpack with a laptop and a COMP229 notebook inside.\",\n  \"type\": \"Stolen\",\n  \"category\": \"Food\",\n  \"location\": \"Library, 2nd floor\",\n  \"date\": \"2099-01-01\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create item with malformed JSON -> 400",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{franToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{ \"title\": \"Broken JSON\", ",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create item 1 - Fran (Lost backpack) -> 201",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{franToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Black Jansport Backpack\",\n  \"description\": \"Black Jansport backpack with a laptop and a COMP229 notebook inside.\",\n  \"type\": \"Lost\",\n  \"category\": \"Accessories\",\n  \"location\": \"Library, 2nd floor\",\n  \"date\": \"2026-10-20T14:30:00.000Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set('franItemId', pm.response.json()._id);",
+                  "pm.test('Owner is the signed-in user', () => pm.expect(pm.response.json().owner).to.eql(pm.collectionVariables.get('franId')));",
+                  "pm.test('Status defaults to Open', () => pm.expect(pm.response.json().status).to.eql('Open'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create item 2 - Fran (Found AirPods) -> 201",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{franToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"White AirPods Pro Case\",\n  \"description\": \"AirPods Pro charging case found on a table, engraved with \\\"F.T.\\\"\",\n  \"type\": \"Found\",\n  \"category\": \"Electronics\",\n  \"location\": \"Cafeteria, Building A\",\n  \"date\": \"2026-10-21T09:15:00.000Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set('franItem2Id', pm.response.json()._id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create duplicate title (case-insensitive) -> 409",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{franToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"black jansport backpack\",\n  \"description\": \"Black Jansport backpack with a laptop and a COMP229 notebook inside.\",\n  \"type\": \"Lost\",\n  \"category\": \"Accessories\",\n  \"location\": \"Library, 2nd floor\",\n  \"date\": \"2026-10-20T14:30:00.000Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 409', () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create item 3 - Alex (Found textbook) -> 201",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{alexToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Web Application Development Textbook\",\n  \"description\": \"Hardcover textbook left behind after class, name written inside the cover.\",\n  \"type\": \"Found\",\n  \"category\": \"Books\",\n  \"location\": \"Room C-210\",\n  \"date\": \"2026-10-22T16:00:00.000Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 201', () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set('alexItemId', pm.response.json()._id);"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "3 - Read items (GET)",
+      "item": [
+        {
+          "name": "List all items (public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Returns 3 items', () => pm.expect(pm.response.json().length).to.eql(3));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Filter by type=Found",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/items?type=Found",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "Found"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('All items are Found', () => pm.response.json().forEach(i => pm.expect(i.type).to.eql('Found')));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Filter by category=Electronics",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/items?category=Electronics",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "Electronics"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('All items are Electronics', () => pm.response.json().forEach(i => pm.expect(i.category).to.eql('Electronics')));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Filter by type=Found&category=Books",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/items?type=Found&category=Books",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "Found"
+                },
+                {
+                  "key": "category",
+                  "value": "Books"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Exactly 1 match', () => pm.expect(pm.response.json().length).to.eql(1));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalid filter value -> 400",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/items?type=Stolen",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "Stolen"
+                }
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get item by id (public)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/{{franItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items",
+                "{{franItemId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get item with invalid id -> 400",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/not-a-valid-id",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items",
+                "not-a-valid-id"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get item with valid but missing id -> 404",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/64b000000000000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items",
+                "64b000000000000000000000"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 404', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List my items - Fran",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{franToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/mine",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items",
+                "mine"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Only Fran\\'s 2 items', () => { const r = pm.response.json(); pm.expect(r.length).to.eql(2); r.forEach(i => pm.expect(i.owner).to.eql(pm.collectionVariables.get('franId'))); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List my items without token -> 401",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/mine",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items",
+                "mine"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "4 - Update items (PUT /api/items/:id)",
+      "item": [
+        {
+          "name": "Update own item (owner) -> 200",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{franToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/{{franItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items",
+                "{{franItemId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Returned\",\n  \"location\": \"Picked up at Security Desk, Building A\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Status is Returned', () => pm.expect(pm.response.json().status).to.eql('Returned'));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update ANOTHER user's item (Alex -> Fran's item) -> 403",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{alexToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/{{franItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items",
+                "{{franItemId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Hijacked by Alex\",\n  \"status\": \"Open\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 403', () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update without token -> 401",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/{{franItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items",
+                "{{franItemId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Open\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update with invalid values / owner field -> 400",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{franToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/{{franItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items",
+                "{{franItemId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Lost forever\",\n  \"owner\": \"64b111111111111111111111\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update with empty body -> 400",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{franToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/{{franItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items",
+                "{{franItemId}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update to a title that already exists -> 409",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{franToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/{{franItem2Id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items",
+                "{{franItem2Id}}"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Web Application Development Textbook\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 409', () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update with invalid id -> 400",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{franToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/12345",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items",
+                "12345"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Returned\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Update missing item -> 404",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{franToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/64b000000000000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items",
+                "64b000000000000000000000"
+              ]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"Returned\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 404', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "5 - Delete items (DELETE)",
+      "item": [
+        {
+          "name": "Delete ANOTHER user's item (Alex -> Fran's item) -> 403",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{alexToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/{{franItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items",
+                "{{franItemId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 403', () => pm.response.to.have.status(403));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete without token -> 401",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/{{franItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items",
+                "{{franItemId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 401', () => pm.response.to.have.status(401));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete with invalid id -> 400",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{franToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/abc",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items",
+                "abc"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 400', () => pm.response.to.have.status(400));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete missing item -> 404",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{franToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/64b000000000000000000000",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items",
+                "64b000000000000000000000"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 404', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete own item (owner) -> 200",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{franToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/{{franItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items",
+                "{{franItemId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get deleted item -> 404",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/{{franItemId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items",
+                "{{franItemId}}"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 404', () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete all my items - Fran -> 200",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{franToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/mine",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items",
+                "mine"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('deletedCount is 1', () => pm.expect(pm.response.json().deletedCount).to.eql(1));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "List my items after delete -> empty",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{franToken}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/items/mine",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items",
+                "mine"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Fran has no items left', () => pm.expect(pm.response.json()).to.eql([]));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Alex's item still exists (other users unaffected)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "items"
+              ]
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200', () => pm.response.to.have.status(200));",
+                  "pm.test('Only Alex\\'s item remains', () => pm.expect(pm.response.json().length).to.eql(1));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
